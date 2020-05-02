@@ -1,0 +1,178 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>BEATZ Readme Documentation</title>
+<link href="images/styles.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.style1 {
+	color: #FF0000;
+	font-weight: bold;
+}
+-->
+</style>
+</head>
+
+<body>
+
+<p align="center"><img border="0" src="images/logo.png"></p>
+
+<p align="center"><font face="Verdana"><b><font size="4">BEATZ 2.0 (Never Stop) Readme</font></b></font></p>
+
+<hr>
+
+<p align="left"><font face="Verdana"><b>1. Server Requirements</b></font></p>
+
+<p align="left"><font face="Verdana"><b>2. Installation</b></font></p>
+
+<p align="left"><font face="Verdana"><b>3. Version History</b></font></p>
+
+<p align="left"><b><font face="Verdana">4</font></b><font face="Verdana"><b>. 
+License Agreement</b></font></p>
+<hr>
+
+<p align="left"><font face="Verdana"><b>1. Server Requirements</b></font></p>
+<li><font face="Verdana" size="2">Operating System: Linux, Windows </font></li>
+<li><font face="Verdana" size="2">Web Server: Apache</font></li>
+<li><font face="Verdana" size="2">PHP 5 or higher</font></li>
+<li><font face="Verdana" size="2">MySQL 5 or Higher</font></li>
+<li><font face="Verdana" size="2">Mod_rewrite </font></li>
+<li><font face="Verdana" size="2">Cron Jobs</font></li>
+<li><font size="2" face="Verdana">GD library</font></li>
+<li><font face="Verdana" size="2">PHP - APC Support (Hint: Optional - Install APC Extension for APC Caching)</font></li>
+<li><font size="2" face="Verdana">PHP - LDAP Support</font></li>
+<li><font face="Verdana" size="2">Cron Jobs</font></li>
+<li><font size="2" face="Verdana">PHP - Curl Extension</font></li>
+
+
+<p align="left"><font face="Verdana"><b>2. Installation</b></font></p>
+
+  <TABLE CLASS="MYTABLE" width="827">
+    
+
+    
+    <TBODY>
+      <tr>
+        <td width="1268">
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2">
+        <b>1.</b> Upload all files in the archieve to the root directory or subdirectory (i.e yoursite.com/site).</font></p>
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2"><br>
+        <b>2.</b> </font>Run the /install directory to install the system <font face="Verdana" size="2">(i.e yoursite.com/site/install)</font></p>
+       <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2"><br>
+        <b>3.</b> </font>Installation step:1<font face="Verdana" size="2"><br><br>-->Check your server settings and click continue </font></p>
+       <p align="center"><img border="1"  src="images/Step_1.png"></p>
+        <b>4.</b> </font>Installation step:2<font face="Verdana" size="2"><br><br>-->Enter your host name,db username,db password,db name then click continue </font></p>
+       <p align="center"><img border="1"  src="images/Step_2.png"></p>
+        <b>4.</b> </font>Installation step:3<font face="Verdana" size="2"><br><br>-->Enter your Site title then click Submit </font></p>
+       <p align="center"><img border="1"  src="images/Step_3.png"></p>
+         <b>5.</b> </font>Installation step:4<font face="Verdana" size="2"><br><br>Enter admin usrname password details</font></p>
+       <p align="center"><img border="1"  src="images/Step_4.png"></p>
+           <b>5.</b> </font>Installation step:5<font face="Verdana" size="2"><br><br>successfully installed BEATZ</font></p>
+       <p align="center"><img border="1"  src="images/Step_5.png"></p>
+        
+
+        <p><strong>Manual Installation </strong></p>
+        <p><font face="Verdana" size="2"><strong>1.</strong>Edit the file /protected/config/local/_settings.php and Copy the below lines and paste into your _settings.php file</font></p>
+          <p> 
+          	 return array (
+          	  'components' => <br>
+  array (<br>
+    'db' => <br>
+    array (<br>
+      'connectionString' => 'mysql:host=localhost;dbname=Beatz',<br>
+      'username' => 'root',<br>
+      'password' => '',<br>
+    ),<br>
+    'cache' => <br>
+    array (<br>
+      'class' => 'CFileCache',<br>
+    ),<br>
+    'user' =><br> 
+    array (<br>
+    ),<br>
+    'mail' =><br> 
+    array (<br>
+      'class' => 'ext.yii-mail.YiiMail',<br>
+      'transportType' => 'php',<br>
+      'viewPath' => 'application.views.mail',<br>
+      'logging' => true,<br>
+      'dryRun' => false,<br>
+    ),<br>
+  ),<br>
+  'params' =><br> 
+  array (<br>
+    'installer' =><br> 
+    array (<br>
+      'db' => <br>
+      array (<br>
+        'installer_hostname' => 'localhost',<br>
+        'installer_database' => 'Beatz',<br>
+      ),<br>
+    ),<br>
+    'installed' => true,<br>
+  ),<br>
+  'name' => 'Beatz',<br>
+  'language' => 'en',<br>
+  'theme' => 'construction_yii_theme',<br><br><br>
+  );
+          </p>
+     
+   
+   <p><font face="Verdana" size="2"><strong>2.</strong>Edit the file /protected/config/local/_settings.php and set your host deatils in the below lines</font></p>
+   
+             <p> array (<br>
+      'connectionString' => 'mysql:host=localhost;dbname=Beatz',<br>
+      'username' => 'root',<br>
+      'password' => '',<br>
+    ),<br><br> </p>
+    <p align="center"><img border="1"  src="images/m_step1.png"></p>
+    <p>      'db' => <br>
+      array (<br>
+        'installer_hostname' => 'localhost',<br>
+        'installer_database' => 'Beatz',<br>
+      ),<br>
+    ),<br>
+    'installed' => true,<br>
+  ),<br>
+  
+  </p><p align="center"><img border="1"  src="images/m_step2.png"></p>
+    
+    
+          
+          
+          
+        <p><strong>3.</strong>&quot;Import the cogzidel.sql in your sql readme/cogzidel.sql....Site URL in database &quot;; <span style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2"></font></span></p>
+          <p align="center"><img border="1"  src="images/m-step3.png"></p>
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2"><b>3.</b> In PhpMyAdmin, import the file readme/cogzidel.sql to create the database 
+        structure.</font></p>
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2"><br>
+        <b>4.</b> Change the permission of the all folders and its subdirectories to 0777:</font></p>
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana" size="2">
+       </font></p><br>
+      
+        <p style="margin-top: 0; margin-bottom: 0"><font face="Verdana"><b>5.</b>You are done  </font></p>
+        <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+      
+        <font SIZE="2">
+        <p style="margin-top: 0; margin-bottom: 0"></font></td>
+      </tr>
+    </TBODY>
+  </TABLE>
+
+
+<p align="left"><font face="Verdana"><b>3. Version History</b></font></p>
+
+<p align="left"><font size="2"><span style="font-family:verdana">BEATZ version 2.0 (Beta release)</span></font></p>
+
+<p align="left"><b><font face="Verdana">4</font></b><font face="Verdana"><b>. 
+License Agreement</b></font></p>
+
+<p><strong>  <a href="http://www.cogzidel.com"><font face="verdana" size="2">http://www.cogzidel.com</font></a></strong></p>
+<hr>
+<p style="text-align: justify;">&nbsp;</p>
+
+<p align="center">&nbsp;</p>
+</body>
+
+</html>
