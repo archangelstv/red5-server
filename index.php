@@ -37,4 +37,3 @@ Yii::import("ext.yiiext.components.zendAutoloader.EZendAutoloader", true);
 Yii::registerAutoloader(array("EZendAutoloader", "loadClass"), true);
 
 $app->run();
-
