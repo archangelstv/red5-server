@@ -1,0 +1,19 @@
+Installation Steps :
+
+1) Paste Construction Folder in themes folder
+
+2) Open /protected/config/main.php
+
+3) Add below line in return array()
+
+return array(
+
+'theme'=>'Construction',
+
+............
+
+........
+
+............
+
+);
