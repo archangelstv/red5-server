@@ -19,16 +19,14 @@
  */
 
 /**
- * Search Controller provides search functions inside the application.
+ * Search Controller provides action for searching users.
  *
  * @author Luke
- * @package humhub.controllers
+ * @package humhub.modules_core.user.controllers
  * @since 0.5
  */
 class SearchController extends Controller
 {
-
-    public $subLayout = "_layout";
 
     /**
      * @return array action filters
@@ -58,148 +56,56 @@ class SearchController extends Controller
     }
 
     /**
-     * SearchAction
+     * JSON Search for Users
      *
-     * Modes: normal for full page, quick as partial for lightbox
+     * Returns an array of users with fields:
+     *  - guid
+     *  - displayName
+     *  - image
+     *  - profile link
      */
-    public function actionIndex()
+    public function actionJson()
     {
 
-        // Get Parameters
-        $keyword = Yii::app()->request->getParam('keyword', "");
-        $spaceGuid = Yii::app()->request->getParam('sguid', "");
-        $mode = Yii::app()->request->getParam('mode', "normal");
-        $page = (int) Yii::app()->request->getParam('page', 1); // current page (pagination)
-        // Cleanup
+        $maxResults = 10;
+        $results = array();
+        $keyword = Yii::app()->request->getParam('keyword');
         $keyword = Yii::app()->input->stripClean($keyword);
-        $spaceGuid = Yii::app()->input->stripClean($spaceGuid);
 
-        if ($mode != 'quick') {
-            $mode = "normal";
+        // Build Search Condition
+        $criteria = new CDbCriteria();
+        $criteria->limit = $maxResults;
+        $criteria->condition = 1;
+        $criteria->params = array();
+        $i = 0;
+        foreach (explode(" ", $keyword) as $part) {
+            $i++;
+            $criteria->condition .= " AND (t.email LIKE :match{$i} OR "
+                    . "t.username LIKE :match{$i} OR "
+                    . "userProfile.firstname LIKE :match{$i} OR "
+                    . "userProfile.lastname LIKE :match{$i} OR "
+                    . "userProfile.title LIKE :match{$i})";
+
+            $criteria->params[':match' . $i] = "%" . $part . "%";
         }
 
-        $limit = HSetting::Get('paginationSize');         // Show Hits
-        $hitCount = 0;      // Total Hit Count
-        $query = "";        // Lucene Query
-        $append = " AND (model:User OR model:Space)";  // Appends for Lucene Query
-        $moreResults = false;  // Indicates if there are more hits
-        $results = array();
+        $users = User::model()->with('userProfile')->findAll($criteria);
 
-        // Quick Search shows always 1
-        if ($mode == 'quick')
-            $limit = 5;
-
-        // Load also Space if requested
-        $currentSpace = null;
-        if ($spaceGuid) {
-            $currentSpace = Space::model()->findByAttributes(array('guid' => $spaceGuid));
-        }
-
-        /*
-         * $index = new Zend_Search_Lucene_Interface_MultiSearcher();
-         * $index->addIndex(Zend_Search_Lucene::open('search/index1'));
-         * $index->addIndex(Zend_Search_Lucene::open('search/index2'));
-         * $index->find('someSearchQuery');
-         */
-
-        // Do Search
-        if ($keyword != "") {
-
-            if ($currentSpace != null) {
-                $append = " AND (model:User OR model:Space OR (belongsToType:Space AND belongsToId:" . $currentSpace->id . "))";
-            }
-
-            $hits = new ArrayObject(HSearch::getInstance()->Find($keyword . "* " . $append));
-            $hitCount = count($hits);
-
-
-            // Limit Hits
-            $hits = new LimitIterator($hits->getIterator(), ($page - 1) * $limit, $limit);
-
-            if ($hitCount > $limit)
-                $moreResults = true;
-
-            // Build Results Array
-
-            foreach ($hits as $hit) {
-
-                $doc = $hit->getDocument();
-                $model = $doc->getField('model')->value;
-                $pk = $doc->getField('pk')->value;
-
-                $object = $model::model()->findByPk($pk);
-                $results[] = $object->getSearchResult();
+        foreach ($users as $user) {
+            if ($user != null) {
+                $userInfo = array();
+                $userInfo['guid'] = $user->guid;
+                $userInfo['displayName'] = CHtml::encode($user->displayName);
+                $userInfo['image'] = $user->getProfileImage()->getUrl();
+                $userInfo['link'] = $user->getUrl();
+                $results[] = $userInfo;
             }
         }
 
-        // Create Pagination Class
-        $pages = new CPagination($hitCount);
-        $pages->setPageSize($limit);
-        $_GET['keyword'] = $keyword; // Fix for post var
-
-        if ($mode == 'quick') {
-            $this->renderPartial('quick', array(
-                'keyword' => $keyword,
-                'results' => $results,
-                'spaceGuid' => $spaceGuid,
-                'moreResults' => $moreResults,
-                'hitCount' => $hitCount,
-            ));
-        } else {
-            $this->render('index', array(
-                'keyword' => $keyword,
-                'results' => $results,
-                'spaceGuid' => $spaceGuid,
-                'moreResults' => $moreResults,
-                'pages' => $pages, // CPagination,
-                'pageSize' => $limit,
-                'hitCount' => $hitCount,
-            ));
-        }
-    }
-
-    /**
-     * JSON Search interface for Mentioning
-     */
-    public function actionMentioning()
-    {
-
-        $results = array();
-        $keyword = Yii::app()->request->getParam('keyword', "");
-        $keyword = Yii::app()->input->stripClean(trim($keyword));
-        
-        if (strlen($keyword) >= 3) {
-            $hits = new ArrayObject(HSearch::getInstance()->Find($keyword . "*  AND (model:User OR model:Space)"));
-            $hitCount = count($hits);
-
-            $hits = new LimitIterator($hits->getIterator(), 0, 10);
-
-            foreach ($hits as $hit) {
-
-                $doc = $hit->getDocument();
-                $model = $doc->getField('model')->value;
-                $pk = $doc->getField('pk')->value;
-
-                $object = $model::model()->findByPk($pk);
-
-                if ($object !== null && $object instanceof HActiveRecordContentContainer) {
-                    $result = array();
-                    $result['guid'] = $object->guid;
-                    if ($object instanceof Space) {
-                        $result['name'] = CHtml::encode($object->name);
-                        $result['type'] = 's';
-                    } elseif  ($object instanceof User) {
-                        $result['name'] = CHtml::encode($object->displayName);
-                        $result['type'] = 'u';
-                    }
-                    $result['image'] = $object->getProfileImage()->getUrl();
-                    $result['link'] = $object->getUrl();
-                    $results[] = $result;
-                }
-            }
-        }
-        
         print CJSON::encode($results);
+        Yii::app()->end();
     }
 
 }
+
+?>
